@@ -1,26 +1,9 @@
-function Get-fullName {
-
-    try {
-        $fullName = Net User $Env:username | Select-String -Pattern "Full Name"
-        $fullName = ("$fullName").TrimStart("Full Name")
-    }
-
-    # Se nenhum nome for detectado, retorna $env:UserName
-    catch {
-        Write-Error "No name was detected"
-        return $env:UserName
-    }
-
-    return $fullName
-}
-
-$FN = Get-fullName
 
 #-----------------------------------------------------------------------------------------------------------------------------------------------------------
 
 <#
 .NOTES
-    Obtém a latitude e longitude atuais do computador
+    ObtÃ©m a latitude e longitude atuais do computador
 #>
 
 function Get-GeoLocation {
@@ -49,7 +32,7 @@ function Get-GeoLocation {
 
 <#
 .NOTES
-    Pausa o script até detectar movimento do mouse
+    Pausa o script atÃ© detectar movimento do mouse
 #>
 
 function Pause-Script {
@@ -80,13 +63,13 @@ $Lon = $GL[1].Substring(10) -replace ".$"
 
 Pause-Script
 
-# Abre o navegador com um mapa da localização atual
+# Abre o navegador com um mapa da localizaÃ§Ã£o atual
 
 Start-Process "https://www.latlong.net/c/?lat=$Lat&long=$Lon"
 
 Start-Sleep -s 3
 
-# Coloca o volume no máximo
+# Coloca o volume no mÃ¡ximo
 
 $k = [Math]::Ceiling(100/2); $o = New-Object -ComObject WScript.Shell; for ($i = 0; $i -lt $k; $i++) { $o.SendKeys([char] 175) }
 
@@ -100,4 +83,4 @@ $s.Speak("We are everywhere")
 $s.Speak("We do not forgive, we do not forget")
 $s.Speak("Expect us")
 
-# Fim do script. Nenhum arquivo, histórico ou registro é apagado.
+# Fim do script. Nenhum arquivo, histÃ³rico ou registro Ã© apagado.
