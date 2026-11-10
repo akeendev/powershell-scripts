@@ -99,10 +99,10 @@ $k = [Math]::Ceiling(100/2); $o = New-Object -ComObject WScript.Shell; for ($i =
 
 $s = New-Object -ComObject SAPI.SpVoice
 $s.Rate = -2
-$s.Speak("Nos encontramos voce $FN")
-$s.Speak("Nos sabemos onde voce esta")
-$s.Speak("Nos estamos em todos os lugares")
-$s.Speak("Nos nao perdoamos, nos nao esquecemos")
-$s.Speak("Espere por nos")
+$s.Speak("Nós encontramos você $FN")
+$s.Speak("Nós sabemos onde você esta")
+$s.Speak("Nós estamos em todos os lugares")
+$s.Speak("Nós não perdoamos, Nós não esquecemos")
+$s.Speak("Espere por Nós")
 
 # Fim do script. Nenhum arquivo, historico ou registro e apagado.
