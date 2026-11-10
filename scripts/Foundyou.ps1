@@ -1,9 +1,26 @@
+function Get-fullName {
+
+    try {
+        $fullName = Net User $Env:username | Select-String -Pattern "Full Name"
+        $fullName = ("$fullName").TrimStart("Full Name")
+    }
+
+    # Se nenhum nome for detectado, retorna $env:UserName
+    catch {
+        Write-Error "Nenhum nome foi encontrado"
+        return $env:UserName
+    }
+
+    return $fullName
+}
+
+$FN = Get-fullName
 
 #-----------------------------------------------------------------------------------------------------------------------------------------------------------
 
 <#
 .NOTES
-    ObtÃ©m a latitude e longitude atuais do computador
+    Obtem a latitude e longitude atuais do computador
 #>
 
 function Get-GeoLocation {
@@ -17,14 +34,15 @@ function Get-GeoLocation {
         }
 
         if ($GeoWatcher.Permission -eq 'Denied') {
-            Write-Error 'Access Denied for Location Information'
+            Write-Error 'Acesso negado para informacoes de localizacao'
+            return $null
         } else {
-            $GeoWatcher.Position.Location | Select Latitude,Longitude
+            return $GeoWatcher.Position.Location
         }
     }
     catch {
-        Write-Error "No coordinates found"
-        return "No Coordinates found"
+        Write-Error "Nenhuma coordenada foi encontrada"
+        return $null
     }
 }
 
@@ -32,7 +50,7 @@ function Get-GeoLocation {
 
 <#
 .NOTES
-    Pausa o script atÃ© detectar movimento do mouse
+    Pausa o script ate detectar movimento do mouse
 #>
 
 function Pause-Script {
@@ -53,23 +71,27 @@ function Pause-Script {
 
 #-----------------------------------------------------------------------------------------------------------------------------------------------------------
 
-$GL = Get-GeoLocation
+$GeoLocation = Get-GeoLocation
 
-$GL = $GL -split " "
-
-$Lat = $GL[0].Substring(11) -replace ".$"
-
-$Lon = $GL[1].Substring(10) -replace ".$"
+if ($GeoLocation) {
+    $Lat = $GeoLocation.Latitude
+    $Lon = $GeoLocation.Longitude
+} else {
+    $Lat = $null
+    $Lon = $null
+}
 
 Pause-Script
 
-# Abre o navegador com um mapa da localizaÃ§Ã£o atual
+# Abre o navegador com um mapa da localizacao atual (somente se as coordenadas foram obtidas)
 
-Start-Process "https://www.latlong.net/c/?lat=$Lat&long=$Lon"
+if ($Lat -and $Lon) {
+    Start-Process "https://www.latlong.net/c/?lat=$Lat&long=$Lon"
+}
 
 Start-Sleep -s 3
 
-# Coloca o volume no mÃ¡ximo
+# Coloca o volume no maximo
 
 $k = [Math]::Ceiling(100/2); $o = New-Object -ComObject WScript.Shell; for ($i = 0; $i -lt $k; $i++) { $o.SendKeys([char] 175) }
 
@@ -77,10 +99,10 @@ $k = [Math]::Ceiling(100/2); $o = New-Object -ComObject WScript.Shell; for ($i =
 
 $s = New-Object -ComObject SAPI.SpVoice
 $s.Rate = -2
-$s.Speak("We found you $FN")
-$s.Speak("We know where you are")
-$s.Speak("We are everywhere")
-$s.Speak("We do not forgive, we do not forget")
-$s.Speak("Expect us")
+$s.Speak("Nos encontramos voce $FN")
+$s.Speak("Nos sabemos onde voce esta")
+$s.Speak("Nos estamos em todos os lugares")
+$s.Speak("Nos nao perdoamos, nos nao esquecemos")
+$s.Speak("Espere por nos")
 
-# Fim do script. Nenhum arquivo, histÃ³rico ou registro Ã© apagado.
+# Fim do script. Nenhum arquivo, historico ou registro e apagado.
